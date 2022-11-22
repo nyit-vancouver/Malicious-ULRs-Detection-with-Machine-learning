@@ -6,3 +6,5 @@
 4. [Mendeley](https://data.mendeley.com/datasets/gdx3pkwp47/2)
 ## The applied models are:
 Logistic, KNN, SVM, Decision Trees, Random Forest, Bagging, and AdaBoosting
+## Contributors:
+[xinyanzhang27](https://github.com/XinyanZhang027)
