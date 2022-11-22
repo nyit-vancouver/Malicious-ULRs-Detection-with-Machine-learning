@@ -1,4 +1,7 @@
 # Detect malicious URLs using machine learning models
+## Description:
+1. **features_extraction.py** is used to extract 31 features, including general features, length features, count features, ratio features and domain features as shown in the features table.
+2. **model training.py** is used to train different ML models and draw the heapmap.
 ## The datasets we collected from: 
 1. [Kaggle](https://www.kaggle.com/code/siddharthkumar25/detect-malicious-url-using-ml/data?select=urldata.csv) 
 2. [UNB](https://www.unb.ca/cic/datasets/url-2016.html)
