@@ -1,9 +1,5 @@
 #!/usr/bin/env python
 # coding: utf-8
-
-# In[1]:
-
-
 import time
 from urllib.parse import urlparse
 import bs4
@@ -23,7 +19,7 @@ from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 from sklearn.metrics import f1_score
 from sklearn import metrics
-#import urllib.request
+import urllib.request
 #import urllib2.urlopen
 from urllib.request import urlopen
 #from urllib2 import urlopen
@@ -33,15 +29,7 @@ from tld import get_tld, get_fld
 import warnings
 warnings.filterwarnings("ignore")
 
-
-# In[3]:
-
-
 urldata = pd.read_csv('finaldata.csv')
-
-
-# In[5]:
-
 
 def getDomain(url):
     domain = urlparse(url).netloc
@@ -113,10 +101,10 @@ def prefixSuffix(url):
 def web_traffic(url):
     try:
     #Filling the whitespaces in the URL if any
-        url = urllib.parse.quote(url)
-        rank = BeautifulSoup(urllib.request.urlopen("http://data.alexa.com/data?cli=10&dat=s&url=" + url).read(), "xml").find(
-        "REACH")['RANK']
-        rank = int(rank)
+        url = urllib.parse.quote(url,safe='/', encoding=None, errors=None)
+        #print(url)
+        #rank = BeautifulSoup(urllib.request.urlopen("http://data.alexa.com/data?cli=10&dat=s&url=" + url).read(), "xml").find("REACH")['RANK']
+        rank = BeautifulSoup(urllib.request.urlopen("http://data.alexa.com/data?cli=10&dat=s&url=" + url).read(), "lxml-xml").find("REACH")['RANK']
     except TypeError:
         return 1
     if rank <100000:
@@ -298,12 +286,9 @@ def first_dir_length(url):
     except:
         return 0
 
-
-# In[24]:
-
-
 # Function to extract features
 def featureExtraction(url):
+
     features = []
     features.append(havingIP(url))
     features.append(haveAtSign(url))
@@ -317,7 +302,6 @@ def featureExtraction(url):
     features.append(get_email(url))
     features.append(google_index(url))
     features.append(web_traffic(url))
-
     features.append(len(str(achieve_subdomain(url))))
     features.append(len(str(achieve_tld(url))))
     features.append(len(str(achieve_tld(url))))
@@ -337,12 +321,7 @@ def featureExtraction(url):
     features.append(alpha_count(url) / url_length(url))
     features.append(digit_count(url) / url_length(url))
     features.append((url_length(url) - (alpha_count(url) + digit_count(url))) / url_length(url))
-
     return features
-
-
-# In[46]:
-
 
 # Create the dataframe to save the features
 result = pd.DataFrame(columns=['use_of_ip', 'have_@', 'url_length', 'dir_depth', 'is_redirection',
@@ -353,46 +332,26 @@ result = pd.DataFrame(columns=['use_of_ip', 'have_@', 'url_length', 'dir_depth',
        'count_dirs', 'first_dir_len', 'pc_alphas', 'pc_digits', 'pc_puncs',
        'result'], index=[0])
 
-
-# In[48]:
-
-
 with open('finaldata.csv',encoding='ISO-8859-1') as csvfile:
     reader = csv.reader(csvfile)
     rows = [row for row in reader]
 
-
-# In[49]:
-
-
 # extract the features of data
 for i in range(len(urldata)):
-    url = rows[i][0]
+    #url = rows[i+1][0]
     try:
-        #print(url)
+        url = rows[i+1][0]
         feature = featureExtraction(url)
-        
         result.loc[i-1,['use_of_ip', 'have_@', 'url_length', 'dir_depth', 'is_redirection',
        'is_https', 'have_-', 'domain_Age', 'domain_End', 'email',
        'google_index', 'web_traffic', 'subdomain_len', 'tld_len', 'fld_len',
        'url_path_len', 'hostname_len', 'url_alphas', 'url_digits', 'url_puncs',
        'count.', 'count@', 'count-', 'count%', 'count?', 'count=',
        'count_dirs', 'first_dir_len', 'pc_alphas', 'pc_digits', 'pc_puncs']]=feature[0:31]
-        #print(feature)
-        time.sleep(2)
+        result['result'][i-1] = urldata['result'][i]
+        time.sleep(1)
     except Exception:
         pass
-
-
-# In[51]:
-
-
-for i in range(len(result)):
-    result['result'][i]=urldata['result'][i]
-
-
-# In[64]:
-
 
 # Transform data types
 for item in ['use_of_ip', 'have_@', 'url_length', 'dir_depth', 'is_redirection',
@@ -405,12 +364,6 @@ for item in ['use_of_ip', 'have_@', 'url_length', 'dir_depth', 'is_redirection',
 
 for item in ['pc_alphas', 'pc_digits', 'pc_puncs']:
     result[item]=result[item].astype(np.float64)
-    
-
-
-# In[151]:
-
 
 # Save the result
 result.to_csv('result.csv',index=False)
-
