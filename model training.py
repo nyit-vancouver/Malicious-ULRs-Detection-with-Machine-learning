@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[15]:
-
-
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
@@ -47,54 +44,18 @@ import joblib
 
 from sklearn.preprocessing import StandardScaler
 
-
-# In[16]:
-
-
 # Show all the columns
 pd.set_option('display.max_columns', None)
 # Show all the rows
 pd.set_option('display.max_rows',None)
-
-
-# In[64]:
-
-
 data = pd.read_csv('result.csv')
-
-
-# In[65]:
-
-
 sns.countplot(x = 'result', data = data, order = data['result'].value_counts().index)
-
-
-# In[63]:
-
-
 data.head()
-
-
-# In[19]:
-
-
 data.info()
-
-
-# In[20]:
-
 
 data.shape
 
-
-# In[21]:
-
-
 data.columns
-
-
-# In[22]:
-
 
 data.head()
 
@@ -142,10 +103,9 @@ x_train, x_test, y_train, y_test = train_test_split(x, y, train_size = 0.7, rand
 
 # In[34]:
 
-
 from lightgbm import LGBMClassifier
 
-lgb = LGBMClassifier(objective='binary',boosting_type= 'gbdt',n_jobs = 5, 
+lgb = LGBMClassifier(objective='binary',boosting_type= 'gbdt',n_jobs = 5,
           silent = True, random_state=5)
 LGB_C = lgb.fit(x_train, y_train)
 
@@ -405,8 +365,8 @@ print (metrics.confusion_matrix(y_test, knn_clf_predictions))
 
 
 svm_clf =  SVC(kernel="poly", degree=3, coef0=1, C=0.1,gamma=0.1)
-svm_clf.fit(x_train2, y_train2)
-svm_clf_predictions = svm_clf.predict(x_test2)
+svm_clf.fit(x_train, y_train)
+svm_clf_predictions = svm_clf.predict(x_test)
 
 # Print results
 print ('The accuracy is:', accuracy_score(y_test, svm_clf_predictions))
@@ -499,20 +459,20 @@ recall_score_=[]
 names_=[]
 for name,model in models_:
     kfold=model_selection.KFold(shuffle=True,n_splits=10,random_state=0)
-    cv_results=model_selection.cross_val_score(model,x_train2,y_train2,cv=kfold,scoring='roc_auc')
+    cv_results=model_selection.cross_val_score(model,x_train,y_train,cv=kfold,scoring='roc_auc')
     results_.append(cv_results)
     bias_.append(np.var(cv_results,ddof=1))
     auc_score_.append(np.mean(cv_results))
-    f1=model_selection.cross_val_score(model,x_train2,y_train2,cv=kfold,scoring='f1_weighted')
+    f1=model_selection.cross_val_score(model,x_train,y_train,cv=kfold,scoring='f1_weighted')
     f1_score_.append(np.mean(f1))
     
-    acc=model_selection.cross_val_score(model,x_train2,y_train2,cv=kfold,scoring='accuracy')
+    acc=model_selection.cross_val_score(model,x_train,y_train,cv=kfold,scoring='accuracy')
     acc_score_.append(np.mean(acc))
     
-    p=model_selection.cross_val_score(model,x_train2,y_train2,cv=kfold,scoring='precision_weighted')
+    p=model_selection.cross_val_score(model,x_train,y_train,cv=kfold,scoring='precision_weighted')
     precision_score_.append(np.mean(p))
     
-    r=model_selection.cross_val_score(model,x_train2,y_train2,cv=kfold,scoring='recall_weighted')
+    r=model_selection.cross_val_score(model,x_train,y_train,cv=kfold,scoring='recall_weighted')
     recall_score_.append(np.mean(r))
 
     names_.append(name)
