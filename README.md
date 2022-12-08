@@ -1,4 +1,6 @@
 # Detect malicious URLs using machine learning models
+## Environment tips:
+This project runs under python3.11. When you install **lightgbm** on macOS, there will be a problem as you need **gcc** to complie the package. [Here](https://lightgbm.readthedocs.io/en/latest/Installation-Guide.html#macos) is the instruction to install **lightgbm** on your macOS.
 ## Description:
 1. **features_extraction.py** is used to extract 31 features, including general features, length features, count features, ratio features and domain features as shown in the features table.
 2. **model training.py** is used to train different ML models and draw the heapmap.
